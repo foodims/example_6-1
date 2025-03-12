@@ -1,7 +1,8 @@
+
 //=====[Libraries]=============================================================
 
 #include "mbed.h"
-
+#include "arm_book_lib.h"
 #include "gas_sensor.h"
 
 //=====[Declaration of private defines]========================================
@@ -10,8 +11,7 @@
 
 //=====[Declaration and initialization of public global objects]===============
 
-DigitalIn mq2(PE_12);
-
+DigitalIn Gas_Sensor(PE_12);
 //=====[Declaration of external public global variables]=======================
 
 //=====[Declaration and initialization of public global variables]=============
@@ -22,17 +22,18 @@ DigitalIn mq2(PE_12);
 
 //=====[Implementations of public functions]===================================
 
-void gasSensorInit()
+//initializes sensor
+void gasSensorInit() 
 {
 }
 
+//updates sensor
 void gasSensorUpdate()
 {
 }
 
+//returns value of sensor reading
 bool gasSensorRead()
 {
-    return mq2;
+    return Gas_Sensor;
 }
-
-//=====[Implementations of private functions]==================================

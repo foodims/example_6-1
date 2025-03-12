@@ -1,13 +1,15 @@
+
 //=====[Libraries]=============================================================
 
-#include "smart_home_system.h"
-
+#include "toaster_alert_system.h"
+#include "user_interface.h"
 //=====[Main function, the program entry point after power on or reset]========
 
 int main()
 {
-    smartHomeSystemInit();
+    toasterAlertSystemInit();
     while (true) {
-        smartHomeSystemUpdate();
+        displaychange();
+        toasterAlertSystemUpdate();
     }
 }

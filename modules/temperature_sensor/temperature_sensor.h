@@ -1,7 +1,8 @@
+
 //=====[#include guards - begin]===============================================
 
-#ifndef _TEMPERATURE_SENSOR_H_
-#define _TEMPERATURE_SENSOR_H_
+#ifndef _temperature_sensor_h_
+#define _temperature_sensor_h_
 
 //=====[Declaration of public defines]=========================================
 
@@ -17,4 +18,4 @@ float celsiusToFahrenheit( float tempInCelsiusDegrees );
 
 //=====[#include guards - end]=================================================
 
-#endif // _TEMPERATURE_SENSOR_H_
+#endif // _temperature_sensor_h_

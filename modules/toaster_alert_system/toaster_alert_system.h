@@ -1,19 +1,17 @@
+
 //=====[#include guards - begin]===============================================
 
-#ifndef _SIREN_H_
-#define _SIREN_H_
+#ifndef _toaster_alert_system_h_
+#define _toaster_alert_system_h_
 
 //=====[Declaration of public defines]=========================================
 
 //=====[Declaration of public data types]======================================
 
 //=====[Declarations (prototypes) of public functions]=========================
-
-void sirenInit();
-bool sirenStateRead();
-void sirenStateWrite( bool state );
-void sirenUpdate( int strobeTime );
+void toasterAlertSystemInit();
+void toasterAlertSystemUpdate();
 
 //=====[#include guards - end]=================================================
 
-#endif // _SIREN_H_
+#endif // _toaster_alert_system_h_

@@ -1,16 +1,17 @@
+
 //=====[Libraries]=============================================================
 
+#include "mbed.h"
 #include "arm_book_lib.h"
-
-#include "smart_home_system.h"
-
-#include "siren.h"
+#include "temperature_sensor.h"
+#include "gas_sensor.h"
 #include "user_interface.h"
-#include "fire_alarm.h"
-#include "pc_serial_com.h"
-#include "event_log.h"
+
 
 //=====[Declaration of private defines]========================================
+
+//defines heat threshold of 30 celcius(human touch)
+#define HEAT_LEVEL     40
 
 //=====[Declaration of private data types]=====================================
 
@@ -22,24 +23,40 @@
 
 //=====[Declaration and initialization of private global variables]============
 
+bool alarmOn = false;
+bool gasDetected = false;
+bool overTemp = false;
+
 //=====[Declarations (prototypes) of private functions]========================
+
+void alarmState(bool state);
 
 //=====[Implementations of public functions]===================================
 
-void smartHomeSystemInit()
-{
-    userInterfaceInit();
-    fireAlarmInit();
-    pcSerialComInit();
+//initializes alarm system outputs
+void alarmSystemInit() {
+gasDetected = false;
+overTemp = false;
+alarmOn = false;
 }
 
-void smartHomeSystemUpdate()
-{
-    userInterfaceUpdate();
-    fireAlarmUpdate();    
-    pcSerialComUpdate();
-    eventLogUpdate();
-    delay(SYSTEM_TIME_INCREMENT_MS);
+//controls alarm state based on sensor readings
+void alarmUpdate() {
+    float tempReading = temperatureSensorReadCelsius();
+    gasDetected = gasSensorRead();
+
+    if (tempReading > HEAT_LEVEL || gasDetected) {
+        alarmState(true);
+    } else {
+        alarmState(false);
+    }
 }
 
-//=====[Implementations of private functions]==================================
+void alarmState(bool state) {
+    if (state) {
+       alarmOn = true;
+    } 
+    else {
+        alarmOn = false;
+    }
+}

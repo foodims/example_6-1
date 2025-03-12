@@ -1,3 +1,4 @@
+
 //=====[#include guards - begin]===============================================
 
 #ifndef _DISPLAY_H_
@@ -9,6 +10,7 @@
 
 //=====[Declarations (prototypes) of public functions]=========================
 
+#include <cstdint>
 void displayInit( void );
  
 void displayCharPositionWrite( uint8_t charPositionX, uint8_t charPositionY );

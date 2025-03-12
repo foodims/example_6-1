@@ -1,192 +1,183 @@
 //=====[Libraries]=============================================================
-
 #include "mbed.h"
 #include "arm_book_lib.h"
-
 #include "user_interface.h"
-
-#include "code.h"
-#include "siren.h"
-#include "smart_home_system.h"
-#include "fire_alarm.h"
-#include "date_and_time.h"
-#include "temperature_sensor.h"
-#include "gas_sensor.h"
-#include "matrix_keypad.h"
+#include <string>
+#include "alarm.h"
 #include "display.h"
+#include "timer.h"
+#include "gas_sensor.h"
+#include "temperature_sensor.h"
 
 //=====[Declaration of private defines]========================================
-
-#define DISPLAY_REFRESH_TIME_MS 1000
-
+#define SYSTEM_TIME_INCREMENT 10
 //=====[Declaration of private data types]=====================================
 
 //=====[Declaration and initialization of public global objects]===============
 
-DigitalOut incorrectCodeLed(LED3);
-DigitalOut systemBlockedLed(LED2);
+DigitalIn in_Switch(D13);
+DigitalIn on_Switch(D15);
+
+AnalogIn Potentiometer(A1);
+
+DigitalOut green_LED(D12);
+DigitalOut red_LED(D14);
+DigitalOut alarmBuzzer(PE_10);
+
+UnbufferedSerial uartUsb( USBTX, USBRX, 115200 );
 
 //=====[Declaration of external public global variables]=======================
 
 //=====[Declaration and initialization of public global variables]=============
 
-char codeSequenceFromUserInterface[CODE_NUMBER_OF_KEYS];
+bool buttonPressed = false;
+bool toasterOn = false;
+bool displayCheck = false;
+const float light = 0.33;
+const float dark = 0.66;
 
+/*
+// Helper function to calculate string length
+size_t getStringLength(const char* str) {
+    size_t length = 0;
+    while (str[length] != '\0') {
+        length++;
+    }
+    return length;
+}
+
+void printMessage(const char* message) {
+    uartUsb.write( message, getStringLength(message) );
+}
+*/
 //=====[Declaration and initialization of private global variables]============
-
-static bool incorrectCodeState = OFF;
-static bool systemBlockedState = OFF;
-
-static bool codeComplete = false;
-static int numberOfCodeChars = 0;
 
 //=====[Declarations (prototypes) of private functions]========================
 
-static void userInterfaceMatrixKeypadUpdate();
-static void incorrectCodeIndicatorUpdate();
-static void systemBlockedIndicatorUpdate();
-
-static void userInterfaceDisplayInit();
-static void userInterfaceDisplayUpdate();
-
 //=====[Implementations of public functions]===================================
 
-void userInterfaceInit()
-{
-    incorrectCodeLed = OFF;
-    systemBlockedLed = OFF;
-    matrixKeypadInit( SYSTEM_TIME_INCREMENT_MS );
-    userInterfaceDisplayInit();
+// button configurations and initializations 
+
+void InputsInit() {
+in_Switch.mode(PullDown);
+on_Switch.mode(PullDown);
 }
 
-void userInterfaceUpdate()
-{
-    userInterfaceMatrixKeypadUpdate();
-    incorrectCodeIndicatorUpdate();
-    systemBlockedIndicatorUpdate();
-    userInterfaceDisplayUpdate();
+void outputsInit() {
+    green_LED = OFF;
+    red_LED = OFF;
+    alarmBuzzer = ON;
 }
 
-bool incorrectCodeStateRead()
-{
-    return incorrectCodeState;
-}
-
-void incorrectCodeStateWrite( bool state )
-{
-    incorrectCodeState = state;
-}
-
-bool systemBlockedStateRead()
-{
-    return systemBlockedState;
-}
-
-void systemBlockedStateWrite( bool state )
-{
-    systemBlockedState = state;
-}
-
-bool userInterfaceCodeCompleteRead()
-{
-    return codeComplete;
-}
-
-void userInterfaceCodeCompleteWrite( bool state )
-{
-    codeComplete = state;
-}
-
-//=====[Implementations of private functions]==================================
-
-static void userInterfaceMatrixKeypadUpdate()
-{
-    static int numberOfHashKeyReleased = 0;
-    char keyReleased = matrixKeypadUpdate();
-
-    if( keyReleased != '\0' ) {
-
-        if( sirenStateRead() && !systemBlockedStateRead() ) {
-            if( !incorrectCodeStateRead() ) {
-                codeSequenceFromUserInterface[numberOfCodeChars] = keyReleased;
-                numberOfCodeChars++;
-                if ( numberOfCodeChars >= CODE_NUMBER_OF_KEYS ) {
-                    codeComplete = true;
-                    numberOfCodeChars = 0;
-                }
-            } else {
-                if( keyReleased == '#' ) {
-                    numberOfHashKeyReleased++;
-                    if( numberOfHashKeyReleased >= 2 ) {
-                        numberOfHashKeyReleased = 0;
-                        numberOfCodeChars = 0;
-                        codeComplete = false;
-                        incorrectCodeState = OFF;
-                    }
-                }
-            }
+// determines if food is in toaster
+void Food_In() {
+if (in_Switch && !on_Switch) {
+    buttonPressed = false;
+    toasterOn = false;
+    green_LED = OFF;
+    red_LED = ON;
+    alarmBuzzer = OFF;
+    if (!buttonPressed) {
+        uartUsb.write("Food is in toaster, please press start to begin toasting\r\n", 60);
+        uartUsb.write("\r\n", 2);
         }
+    }
+
+if (in_Switch && on_Switch) {
+    buttonPressed = true;
+    toasterOn = true;
+    green_LED = ON;
+    red_LED = OFF;
+    alarmBuzzer = ON;
+    if (buttonPressed) {
+        uartUsb.write("Food has been inserted in toaster and toaster is ON\r\n", 51);
+        uartUsb.write("\r\n", 2);
+        }
+}
+}
+
+
+// determines desired darkness level of toast 
+// corresponds with timer
+const char* Dark_Level() {   
+if (!toasterOn) {
+    uartUsb.write("N/A\r\n", 5);  // Send "N/A" if toaster is off
+    return "N/A";  // Return "N/A" if toaster is off
+}
+
+float levelselect = Potentiometer.read();
+    if (levelselect < light) {
+        //uartUsb.write("light\r\n", 7);
+        return "light"; 
+    }
+    else if (levelselect > dark) {
+        //uartUsb.write("dark\r\n", 6);
+        return "dark";   
+    }
+    else {
+        //uartUsb.write("medium\r\n", 8);
+        return "medium"; 
     }
 }
 
-static void userInterfaceDisplayInit()
-{
+void displaychange() {
     displayInit();
-     
-    displayCharPositionWrite ( 0,0 );
-    displayStringWrite( "Temperature:" );
+    displayCharPositionWrite (0,0);
+    displayStringWrite("Level:");
+
+
 
     displayCharPositionWrite ( 0,1 );
-    displayStringWrite( "Gas:" );
-    
-    displayCharPositionWrite ( 0,2 );
-    displayStringWrite( "Alarm:" );
+    displayStringWrite( "Time:" );
+    /*
+    char timeStr[4];
+    sprintf(timeStr, "%d", getTimeRemaining());
+    displayCharPositionWrite( 6,1 );
+    displayStringWrite(timeStr);
+*/
+if (toasterOn) {
+    displayCharPositionWrite( 7,0 );
+    if (Dark_Level() == "light") {
+        displayStringWrite("Light");
+}
+    else if (Dark_Level() == "medium") {
+        displayStringWrite("Medium");
+}
+    else if (Dark_Level() == "dark") {
+        displayStringWrite("Dark");
+}
+displayCheck = true;
 }
 
-static void userInterfaceDisplayUpdate()
-{
-    static int accumulatedDisplayTime = 0;
-    char temperatureString[3] = "";
-    
-    if( accumulatedDisplayTime >=
-        DISPLAY_REFRESH_TIME_MS ) {
-
-        accumulatedDisplayTime = 0;
-
-        sprintf(temperatureString, "%.0f", temperatureSensorReadCelsius());
-        displayCharPositionWrite ( 12,0 );
-        displayStringWrite( temperatureString );
-        displayCharPositionWrite ( 14,0 );
-        displayStringWrite( "'C" );
-
-        displayCharPositionWrite ( 4,1 );
-
-        if ( gasDetectorStateRead() ) {
-            displayStringWrite( "Detected    " );
-        } else {
-            displayStringWrite( "Not Detected" );
-        }
-
-        displayCharPositionWrite ( 6,2 );
-        
-        if ( sirenStateRead() ) {
-            displayStringWrite( "ON " );
-        } else {
-            displayStringWrite( "OFF" );
-        }
-
-    } else {
-        accumulatedDisplayTime =
-            accumulatedDisplayTime + SYSTEM_TIME_INCREMENT_MS;        
-    } 
+    if (&alarmState && displayCheck){
+        displayCharPositionWrite ( 10,1 );
+        displayStringWrite( "DANGER" );
+}
+    else if (!&alarmState && displayCheck) {
+        displayCharPositionWrite ( 10,1 );
+        displayStringWrite( "SAFE" );
+}
 }
 
-static void incorrectCodeIndicatorUpdate()
-{
-    incorrectCodeLed = incorrectCodeStateRead();
-}
 
-static void systemBlockedIndicatorUpdate()
-{
-    systemBlockedLed = systemBlockedState;
+/*
+void alarmalert() {
+    if (alarmOn == true) {
+        red_LED = ON;
+        alarmBuzzer = OFF;
+}
+    else if (alarmOn == false) {
+        red_LED = OFF;
+        alarmBuzzer = ON;
+    }
+}
+*/
+
+//updates interface based on inputs
+//updates display 
+void user_InterfaceUpdate() {
+displaychange();
+Food_In();
+Dark_Level();
+//alarmalert();
 }

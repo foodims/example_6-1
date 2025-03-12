@@ -1,19 +1,18 @@
 //=====[#include guards - begin]===============================================
 
-#ifndef _DATE_AND_TIME_H_
-#define _DATE_AND_TIME_H_
+#ifndef _alarm_h_
+#define _alarm_h_
 
 //=====[Declaration of public defines]=========================================
 
 //=====[Declaration of public data types]======================================
-
+extern bool alarmOn;
 //=====[Declarations (prototypes) of public functions]=========================
 
-char* dateAndTimeRead();
-
-void dateAndTimeWrite( int year, int month, int day, 
-                       int hour, int minute, int second );
+void alarmSystemInit();
+void alarmUpdate();
+void alarmState(bool state);
 
 //=====[#include guards - end]=================================================
 
-#endif // _DATE_AND_TIME_H_
+#endif // _alarm_h_

@@ -1,7 +1,8 @@
+
 //=====[#include guards - begin]===============================================
 
-#ifndef _GAS_SENSOR_H_
-#define _GAS_SENSOR_H_
+#ifndef _gas_sensor_h_
+#define _gas_sensor_h_
 
 //=====[Declaration of public defines]=========================================
 
@@ -15,4 +16,4 @@ bool gasSensorRead();
 
 //=====[#include guards - end]=================================================
 
-#endif // _GAS_SENSOR_H_
+#endif // _gas_sensor_h_
