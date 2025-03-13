@@ -52,7 +52,7 @@ countdownTimer.start();
 lastUpdateTime = chrono::duration_cast<chrono::seconds>(countdownTimer.elapsed_time());
 }
 
-// updates timer every second
+// updates timer every second and decrements timer by 1
 void timerUpdate() {
 if (timeRemaining > 0) {
     chrono::seconds elapsed = chrono::duration_cast<chrono::seconds>(countdownTimer.elapsed_time());
