@@ -1,4 +1,5 @@
 //=====[Libraries]=============================================================
+
 #include "mbed.h"
 #include "arm_book_lib.h"
 #include "user_interface.h"
@@ -11,7 +12,9 @@
 #include "temperature_sensor.h"
 
 //=====[Declaration of private defines]========================================
+
 #define SYSTEM_TIME_INCREMENT 10
+
 //=====[Declaration of private data types]=====================================
 
 //=====[Declaration and initialization of public global objects]===============
@@ -44,19 +47,21 @@ const float dark = 0.66;
 //=====[Implementations of public functions]===================================
 
 // button configurations and initializations 
-
 void InputsInit() {
 in_Switch.mode(PullDown);
 on_Switch.mode(PullDown);
 }
 
+// output configurations
 void outputsInit() {
     green_LED = OFF;
     red_LED = OFF;
     alarmBuzzer = OFF;
 }
 
-// determines if food is in toaster
+// determines if food is in toaster or if toaster is turned on
+// displays necessary messages on serial moniter
+// changes LED and buzzer output depending on user switch inputs
 void Food_In() {
 if (in_Switch && !on_Switch) {
     toasterOn = false;
@@ -95,7 +100,7 @@ else if (!in_Switch && on_Switch) {
 // corresponds with timer
 const char * Dark_Level() {   
 if (!toasterOn) {
-    return "N/A";  // Return "N/A" if toaster is off
+    return "N/A"; 
 }
 
 float levelselect = Potentiometer.read();
@@ -110,6 +115,9 @@ float levelselect = Potentiometer.read();
     }
 }
 
+//displays the selected toast level on LCD
+//displays the time remianing
+//displays alarm state (danger/safe)
 void displayChange() {
    
     displayInit();
@@ -153,7 +161,7 @@ else if (emergency == false && displayCheck) {
 }
 
 
-
+// turns on buzzer and red LED when alarm is activatec
 void alarmAlert() {
     if (emergency == true) {
         red_LED = ON;
