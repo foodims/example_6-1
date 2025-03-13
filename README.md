@@ -20,5 +20,4 @@ Finally, the LCD displays the selected darkness level, time remaining, and if an
 ### Summary of Testing Results:
 
 
-
 ### Modular Design
