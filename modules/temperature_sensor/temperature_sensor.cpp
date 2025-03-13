@@ -8,6 +8,8 @@
 //=====[Declaration of private defines]========================================
 
 // number of samples taken to determine average reading
+
+//Sets temp macro to 10 which will be used to average readings to eliminate noise within readings
 #define Temp_Sensor_SAMPLES    10
 
 //=====[Declaration of private data types]=====================================
