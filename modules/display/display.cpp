@@ -1,3 +1,6 @@
+// display module and functions were copied from previous chapter assignments
+
+
 //=====[Libraries]=============================================================
 
 #include "mbed.h"
