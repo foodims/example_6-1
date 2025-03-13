@@ -18,7 +18,7 @@ put their food in. The alarm system will activate if temperature rises above the
 Finally, the LCD displays the selected darkness level, time remaining, and if any incidents are occuring (gas detected or temp too high).  
 
 ### Summary of Testing Results:
-Below you will find both the summary of our testing results and the modular diagram. We believe that our project had a 95% work rate, with everthing working as intended aside from the timer on the LCD.
+Below you will find both the summary of our testing results and the modular diagram. We believe that our project had a 95% success rate, with everything working as intended aside from the timer on the LCD.
 
 <img width="474" alt="Screenshot 2025-03-13 at 9 56 08 AM" src="https://github.com/user-attachments/assets/1084eedf-ae37-48eb-82ed-b952dbb723e3" />
 
