@@ -9,7 +9,7 @@ int main()
 {
     toasterAlertSystemInit();
     while (true) {
-        displaychange();
+        displayChange();
         toasterAlertSystemUpdate();
     }
 }

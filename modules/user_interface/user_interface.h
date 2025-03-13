@@ -5,6 +5,7 @@
 //=====[Declaration of public defines]=========================================
 
 //=====[Declaration of public data types]======================================
+extern bool displayTime;
 extern bool displayCheck;
 extern bool buttonPressed;
 extern bool toasterReady;
@@ -14,8 +15,8 @@ void InputsInit();
 void outputsInit();
 void Food_In();
 const char * Dark_Level();
-void displaychange();
-//void alarmalert();
+void displayChange();
+void alarmalert();
 void user_InterfaceUpdate();
 //=====[#include guards - end]=================================================
 #endif // _user_interface_h_

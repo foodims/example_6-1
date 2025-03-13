@@ -6,7 +6,7 @@
 //=====[Declaration of public defines]=========================================
 
 //=====[Declaration of public data types]======================================
-
+extern int timeRemaining;
 //=====[Declarations (prototypes) of public functions]=========================
 void timerInit();
 void startTimer();

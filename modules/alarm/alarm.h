@@ -6,12 +6,13 @@
 //=====[Declaration of public defines]=========================================
 
 //=====[Declaration of public data types]======================================
+extern bool emergency;
 extern bool alarmOn;
 //=====[Declarations (prototypes) of public functions]=========================
 
 void alarmSystemInit();
 void alarmUpdate();
-void alarmState(bool state);
+
 
 //=====[#include guards - end]=================================================
 

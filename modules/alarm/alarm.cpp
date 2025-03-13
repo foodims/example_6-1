@@ -11,7 +11,7 @@
 //=====[Declaration of private defines]========================================
 
 //defines heat threshold of 30 celcius(human touch)
-#define HEAT_LEVEL     40
+#define HEAT_LEVEL     35
 
 //=====[Declaration of private data types]=====================================
 
@@ -22,14 +22,13 @@
 //=====[Declaration and initialization of public global variables]=============
 
 //=====[Declaration and initialization of private global variables]============
-
-bool alarmOn = false;
+bool emergency = false;
 bool gasDetected = false;
 bool overTemp = false;
 
 //=====[Declarations (prototypes) of private functions]========================
 
-void alarmState(bool state);
+
 
 //=====[Implementations of public functions]===================================
 
@@ -37,7 +36,7 @@ void alarmState(bool state);
 void alarmSystemInit() {
 gasDetected = false;
 overTemp = false;
-alarmOn = false;
+emergency = false; 
 }
 
 //controls alarm state based on sensor readings
@@ -46,17 +45,10 @@ void alarmUpdate() {
     gasDetected = gasSensorRead();
 
     if (tempReading > HEAT_LEVEL || gasDetected) {
-        alarmState(true);
+        emergency = true;
+
     } else {
-        alarmState(false);
+        emergency = false;
     }
 }
 
-void alarmState(bool state) {
-    if (state) {
-       alarmOn = true;
-    } 
-    else {
-        alarmOn = false;
-    }
-}
